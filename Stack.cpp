@@ -23,6 +23,7 @@ typedef double StackElem_t;
 FILE *f = fopen("log.txt", "w+");
 
 struct CStack {
+    int x = 0;
     double canary1 = POISON;
     StackElem_t *data;
     int count;
@@ -64,7 +65,9 @@ void StackConstruct(CStack *str1) {
     str1->data[0] = POISON;
     str1->data[NMAX + 2] = POISON;
     str1->data++;
+  //  for(int i = 0; i < NMAX; i++, std::cout << str1->data[i] << "$" << std::endl);
     str1->hash_sum = hash(str1);
+
     ASSERT_OK()
 }
 
@@ -82,6 +85,7 @@ int StackPush(CStack *str1, StackElem_t value) {
     ASSERT_OK()
     if (str1->count < NMAX) {
         str1->data[str1->count++] = value;
+    //    std::cout << str1->count << "Es" << std::endl;
         str1->hash_sum = hash(str1);
     } else {
         std::cout << "Stack is full" << std::endl;
@@ -105,12 +109,13 @@ StackElem_t StackPop(CStack *str1) {
     StackElem_t elem = 0;
     ASSERT_OK()
 
-    if (str1->count >= 0) {
+    if (str1->count > 0) {
+      //  std::cout << str1->count << std::endl;
         elem = str1->data[--str1->count];
         str1->hash_sum = hash(str1);
         return elem;
     } else
-        std::cout << "Stack is end" << std::endl;
+  //      std::cout << "Stack is end" << std::endl;
     ASSERT_OK()
 }
 
@@ -178,8 +183,11 @@ void StackDump(CStack *str1) {
 StackElem_t hash(CStack *str1) {
 
     StackElem_t sum = 0;
-
-    for (int i = 0; i <= NMAX; i++, sum += str1->data[i + 1]);
+  //  for(int i = 0; i < NMAX; i++, std::cout << str1->data[i] << "*" << std::endl);
+    for (int i = 0; i < NMAX; i++){
+        sum += str1->data[i];
+  //  std::cout << sum << std::endl;
+    }
     sum += str1->count;
     return sum;
 }
