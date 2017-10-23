@@ -9,6 +9,8 @@ FILE *text_f = fopen("newcommands.txt", "rb");
                 elem_t num_1 = StackPop(&cpu->stack);\
                 elem_t num_2 = StackPop(&cpu->stack);\
 
+#define DEST k = buffer[k + 1];
+
 struct CPU {
     CStack stack;
     elem_t num_R;
@@ -46,6 +48,8 @@ bool jbe(CPU *cpu);
 
 void push(CPU *cpu, int num);
 
+long size_f();
+
 int main() {
     CPU str = {0};
     elem_t num = 0;
@@ -55,15 +59,12 @@ int main() {
     fclose(text_f);
 }
 
+
 int calc_sum(CPU *cpu) {
-    cpu->num_R = 0;
-    cpu->num_B = 0;
-    cpu->num_A = 0;
+
     int *buffer = NULL;
 
-    fseek(text_f, 0, SEEK_END);
-    long size = ftell(text_f);
-    fseek(text_f, 0, SEEK_SET);
+    long size = size_f();
 
     buffer = (int *) calloc(size + 1, sizeof(elem_t));
 
@@ -71,6 +72,7 @@ int calc_sum(CPU *cpu) {
         fscanf(text_f, "%d", &buffer[i]);
 
     for (int k = 0; k < size; k++) {
+
         switch (buffer[k]) {
             case PUSH: {
                 push(cpu, buffer[++k]);
@@ -97,32 +99,32 @@ int calc_sum(CPU *cpu) {
                 break;
             }
             case JMP: {
-                k = buffer[k + 1];
+                DEST
                 break;
             }
             case JE: {
                 if(je(cpu))
-                    k = buffer[k + 1];
+                    DEST
             }
             case JNE: {
                 if(jne(cpu))
-                    k = buffer[k + 1];
+                    DEST
             }
             case JA: {
                 if(ja(cpu))
-                    k = buffer[k + 1];
+                    DEST
             }
             case JAE: {
                 if(jae(cpu))
-                    k = buffer[k + 1];
+                    DEST
             }
             case JB: {
                 if(jb(cpu))
-                    k = buffer[k + 1];
+                    DEST
             }
             case JBE: {
                 if(jbe(cpu))
-                    k = buffer[k + 1];
+                    DEST
             }
         }
     }
@@ -192,4 +194,11 @@ void out(CPU *cpu) {
 
 void push(CPU *cpu, int num) {
     StackPush(&cpu->stack, num);
+}
+
+long size_f() {
+    fseek(text_f, 0, SEEK_END);
+    long size = ftell(text_f);
+    fseek(text_f, 0, SEEK_SET);
+    return size;
 }
