@@ -16,6 +16,7 @@ struct CPU {
     elem_t num_B;
 };
 
+enum operation {PUSH = 1, ADD = 2, MUL = 3, SUB = 4, DIV = 5, END = 6, JMP =7, JE = 8, JNE = 9, JA=10, JAE = 11, JB = 12, JBE = 13};
 
 int calc_sum(CPU *str);
 
@@ -30,6 +31,18 @@ void sub(CPU *cpu);
 void sub(CPU *cpu);
 
 void out(CPU *cpu);
+
+bool je(CPU *cpu);
+
+bool jne(CPU *cpu);
+
+bool ja(CPU *cpu);
+
+bool jae(CPU *cpu);
+
+bool jb(CPU *cpu);
+
+bool jbe(CPU *cpu);
 
 void push(CPU *cpu, int num);
 
@@ -46,45 +59,104 @@ int calc_sum(CPU *cpu) {
     cpu->num_R = 0;
     cpu->num_B = 0;
     cpu->num_A = 0;
-
     int *buffer = NULL;
+
     fseek(text_f, 0, SEEK_END);
     long size = ftell(text_f);
     fseek(text_f, 0, SEEK_SET);
+
     buffer = (int *) calloc(size + 1, sizeof(elem_t));
+
     for (int i = 0; i < size; i++)
         fscanf(text_f, "%d", &buffer[i]);
+
     for (int k = 0; k < size; k++) {
         switch (buffer[k]) {
-            case 1: {
+            case PUSH: {
                 push(cpu, buffer[++k]);
                 break;
             }
-            case 2: {
+            case ADD: {
                 add(cpu);
                 break;
             }
-            case 3: {
+            case MUL: {
                 mul(cpu);
                 break;
             }
-            case 4: {
+            case SUB: {
                 sub(cpu);
                 break;
             }
-            case 5: {
+            case DIV: {
                 div(cpu);
                 break;
             }
-            case 6: {
+            case END: {
                 out(cpu);
                 break;
             }
-            case
+            case JMP: {
+                k = buffer[k + 1];
+                break;
+            }
+            case JE: {
+                if(je(cpu))
+                    k = buffer[k + 1];
+            }
+            case JNE: {
+                if(jne(cpu))
+                    k = buffer[k + 1];
+            }
+            case JA: {
+                if(ja(cpu))
+                    k = buffer[k + 1];
+            }
+            case JAE: {
+                if(jae(cpu))
+                    k = buffer[k + 1];
+            }
+            case JB: {
+                if(jb(cpu))
+                    k = buffer[k + 1];
+            }
+            case JBE: {
+                if(jbe(cpu))
+                    k = buffer[k + 1];
+            }
         }
     }
 }
 
+bool je(CPU *cpu) {
+    read_el
+    return num_1 == num_2;
+}
+
+bool jne(CPU *cpu) {
+    read_el
+    return num_1 != num_2;
+}
+
+bool ja(CPU *cpu) {
+    read_el
+    return num_1 > num_2;
+}
+
+bool jae(CPU *cpu) {
+    read_el
+    return num_1 >= num_2;
+}
+
+bool jb(CPU *cpu) {
+    read_el
+    return num_1 < num_2;
+}
+
+bool jbe(CPU *cpu) {
+    read_el
+    return num_1 <= num_2;
+}
 
 void add(CPU *cpu) {
     read_el
