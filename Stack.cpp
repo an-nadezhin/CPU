@@ -23,14 +23,13 @@ typedef double StackElem_t;
 FILE *f = fopen("log.txt", "w+");
 
 struct CStack {
-    int x = 0;
+    int o = 0;
     double canary1 = POISON;
     StackElem_t *data;
     int count;
     StackElem_t hash_sum;
     double canary2 = POISON;
 };
-
 
 void StackDump(CStack *str1);
 
@@ -64,10 +63,11 @@ void StackConstruct(CStack *str1) {
         exit(2);
     str1->data[0] = POISON;
     str1->data[NMAX + 2] = POISON;
-    str1->data++;
-  //  for(int i = 0; i < NMAX; i++, std::cout << str1->data[i] << "$" << std::endl);
+ //   for(int h = 0; h < NMAX + 3; h++)
+ //       std::cout << str1->data[h] << std::endl;
+    str1->data++ ;
     str1->hash_sum = hash(str1);
-
+  //  std::cout << str1->data[-1] << std::endl;
     ASSERT_OK()
 }
 
@@ -85,7 +85,6 @@ int StackPush(CStack *str1, StackElem_t value) {
     ASSERT_OK()
     if (str1->count < NMAX) {
         str1->data[str1->count++] = value;
-    //    std::cout << str1->count << "Es" << std::endl;
         str1->hash_sum = hash(str1);
     } else {
         std::cout << "Stack is full" << std::endl;
@@ -109,13 +108,12 @@ StackElem_t StackPop(CStack *str1) {
     StackElem_t elem = 0;
     ASSERT_OK()
 
-    if (str1->count > 0) {
-      //  std::cout << str1->count << std::endl;
+    if (str1->count >= 0) {
         elem = str1->data[--str1->count];
         str1->hash_sum = hash(str1);
         return elem;
     } else
-  //      std::cout << "Stack is end" << std::endl;
+        std::cout << "Stack is end" << std::endl;
     ASSERT_OK()
 }
 
@@ -166,7 +164,7 @@ void StackDump(CStack *str1) {
     fprintf(f, "Stack (ERROR!!!)\n");
     fprintf(f, "count = %d\n", str1->count);
     fprintf(f, "data[NMAX] %p = \n", str1->data);
-    for (int i = 0; i <= NMAX; i++)
+    for (int i = -1; i <= NMAX + 1; i++)
         fprintf(f, "[%d] = %f\n", i, str1->data[i]);
     fflush(f);
 }
@@ -183,11 +181,9 @@ void StackDump(CStack *str1) {
 StackElem_t hash(CStack *str1) {
 
     StackElem_t sum = 0;
-  //  for(int i = 0; i < NMAX; i++, std::cout << str1->data[i] << "*" << std::endl);
-    for (int i = 0; i < NMAX; i++){
-        sum += str1->data[i];
-  //  std::cout << sum << std::endl;
-    }
+
+    for (int i = 0; i < NMAX; i++)
+        sum += str1->data[i + 1];
     sum += str1->count;
     return sum;
 }
