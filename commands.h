@@ -8,48 +8,58 @@
 #define SPUSH StackPush(&cpu->stack, res);
 #define SPOP StackPop(&cpu->stack)
 
-#define DEST k = buffer[k+1] - 1;
-
-#ifndef CPU_COMMANDS_H
-#define CPU_COMMANDS_H
-
-DEF_CMD(1, {StackPush(&cpu->stack, buffer[++k]);})
-
-DEF_CMD(2, {READ_EL res = num_1 + num_2;  SPUSH})
-
-DEF_CMD(3, {READ_EL res = num_1 * num_2; SPUSH})
-
-DEF_CMD(4, {READ_EL res = num_2 - num_1; SPUSH})
-
-DEF_CMD(5, {READ_EL res = num_2 / num_1; SPUSH})
-
-DEF_CMD(6, {std::cout << SPOP << std::endl;})
-
-DEF_CMD(7, {DEST})
-
-DEF_CMD(8, {READ_EL if(num_1 == num_2) DEST else k++;})
-
-DEF_CMD(9, {READ_EL if(num_1 != num_2) DEST else k++;})
-
-DEF_CMD(10, {READ_EL if(num_1 > num_2) DEST else k++;})
-
-DEF_CMD(11, {READ_EL if(num_1 >= num_2) DEST else k++;})
-
-DEF_CMD(12, {READ_EL if(num_1 < num_2) DEST else k++;})
-
-DEF_CMD(13, {READ_EL if(num_1 <= num_2) DEST else k++;})
-
-DEF_CMD(14, {cpu->ax = SPOP;})
-
-DEF_CMD(15, {cpu->bx = SPOP;})
-
-DEF_CMD(16, {cpu->cx = SPOP;})
-
-DEF_CMD(17, {StackPush(&cpu->stack, cpu->ax);})
-
-DEF_CMD(18, {StackPush(&cpu->stack, cpu->bx);})
-
-DEF_CMD(19, {StackPush(&cpu->stack, cpu->cx);})
+#define DEST pc = cpu->rom[pc];
 
 
-#endif //CPU_COMMANDS_H
+
+DEF_CMD(NOP, "nop", 0, {})
+
+DEF_CMD(PUSH, "push", 1, {StackPush(&cpu->stack, (StackElem_t) cpu->rom[pc++]);})
+
+DEF_CMD(ADD, "add", 0, {READ_EL res = num_2 + num_1;  SPUSH})
+
+DEF_CMD(MUL, "mul", 0, {READ_EL res = num_2 * num_1; SPUSH})
+
+DEF_CMD(SUB, "sub", 0, {READ_EL res = num_2 - num_1; SPUSH})
+
+DEF_CMD(DIV, "div", 0, {READ_EL res = num_2 / num_1; SPUSH})
+
+DEF_CMD(SQRT, "sqrt", 0, {StackElem_t arg = SPOP; StackPush(&cpu->stack, sqrt(arg));})
+
+DEF_CMD(OUT, "out", 0, {std::cout << SPOP << std::endl;})
+
+DEF_CMD(JMP, "jmp", 1, {DEST})
+
+DEF_CMD(JE, "je", 1, {READ_EL if(num_2 == num_1) DEST else pc++;})
+
+DEF_CMD(JNE, "jne", 1, {READ_EL if(num_2 != num_1) DEST else pc++;})
+
+DEF_CMD(JA, "ja", 1, {READ_EL if(num_2 > num_1) DEST else pc++;})
+
+DEF_CMD(JAE, "jae", 1, {READ_EL if(num_2 >= num_1) DEST else pc++;})
+
+DEF_CMD(JB, "jb", 1, {READ_EL if(num_2 < num_1) DEST else pc++;})
+
+DEF_CMD(JBE, "jbe", 1, {READ_EL if(num_2 <= num_1) DEST else pc++;})
+
+DEF_CMD(POP_AX, "pop_ax", 0, {cpu->ax = SPOP;})
+
+DEF_CMD(POP_BX, "pop_bx", 0, {cpu->bx = SPOP;})
+
+DEF_CMD(POP_CX, "pop_cx", 0, {cpu->cx = SPOP;})
+
+DEF_CMD(PUSH_AX, "push_ax", 0, {StackPush(&cpu->stack, cpu->ax);})
+
+DEF_CMD(PUSH_BX, "push_bx", 0, {StackPush(&cpu->stack, cpu->bx);})
+
+DEF_CMD(PUSH_CX, "push_cx", 0, {StackPush(&cpu->stack, cpu->cx);})
+
+DEF_CMD(CALL, "call", 1, {StackPush(&cpu->call_st, pc + 1); DEST})
+
+DEF_CMD(RET, "ret", 0, {pc = StackPop(&cpu->call_st);})
+
+DEF_CMD(LD, "ld", 0, {int a = (int) SPOP; StackPush(&cpu->stack, cpu->ram[a]);})
+
+DEF_CMD(ST, "st", 0, {StackElem_t value = SPOP; int a = (int) SPOP; cpu->ram[a] = value;})
+
+DEF_CMD(HALT, "halt", 0, {return 0;})

@@ -1,14 +1,37 @@
 #include <iostream>
 #include <cstring>
-
-FILE *IN = fopen("/home/andrew/CPU/cmake-build-debug/comands.txt", "r");
-FILE *OUT = fopen("/home/andrew/CPU/cmake-build-debug/newcommands.txt", "w+");
-
-
-int recode();
+#include "CPU.h"
+#include "assembler.h"
 
 
+#define DEF_CMD(num, name, num_arg, code)  name,
 
+const char *names[] = {
+#include "commands.h"
+};
+
+#undef DEF_CMD
+
+/*
+
+const char *names[] = {
+ "nop",
+ "push",
+ "add",
+};
+
+
+ */
+
+#define DEF_CMD(num, name, num_arg, code) num_arg,
+
+int num_args[] = {
+#include "commands.h"
+};
+
+#undef DEF_CMD
+
+// nop = 0;
 // push = 1;
 // add = 2;
 // mul = 3;
@@ -29,166 +52,104 @@ int recode();
 // pop bx = 18
 // pop cx = 19
 
+const char* getname(int op) {
+    return names[op];
+}
 
-int recode() {
+bool assembler(const char *filenameIN, const char *filenameOUT) {
+
+    FILE *IN = fopen(filenameIN, "r");
+    FILE *OUT = fopen(filenameOUT, "w+");
+
+    if (IN == NULL) {
+        std::cout << filenameIN << " not found" << std::endl;
+        return true;
+    }
+
+    if (OUT == NULL) {
+        std::cout << filenameOUT << " failure " << std::endl;
+        return true;
+    }
+
+    char name[10] = {0};
+
+    std::cout << sizeof(num_args) / sizeof(num_args[0]) << std::endl;
+
+    std::cout << num_args[0] << std::endl;
+    std::cout << num_args[1] << std::endl;
+    std::cout << num_args[2] << std::endl;
+    std::cout << num_args[3] << std::endl;
+    std::cout << num_args[4] << std::endl;
+
 
     int k = 1;
     int pos = 0;
     int pos_j = 0;
     int labels[10] = {0};
-    char buffer[10] = {0};
+
     char buf_reg[10] = {0};
+    char *regist = {0};
     int num = 0;
 
-    while (fscanf(IN, "%s", buffer) != EOF) {
-        if (strchr(buffer, ':')) {
-            labels[k++] = pos;
-        }
-        pos++;
 
+    while (fscanf(IN, "%s", name) != EOF) {
+        char* ptr = strchr(name, ':');
+        if (ptr) {
+            *ptr = '\0';
+            labels[atoi(name)] = pos;
+        }
+            pos++;
     }
+
 
     fseek(IN, 0, SEEK_SET);
 
-    while (fscanf(IN, "%s", buffer) != EOF) {
+int pc= 0;
 
-        if (!strcmp(buffer, "push")) {
-            fscanf(IN, "%s", buf_reg);
-            if (!strcmp(buf_reg, "ax")) {
-                fprintf(OUT, "14\n");
-                memset(buffer, 0, 10);
-              //  fprintf(OUT, "%s\n", buf_reg);
-                memset(buf_reg, 0, 10);
-                continue;
+    while (fscanf(IN, "%s", name) != EOF) {
+        std::cout << pc << ":" << name;
+        if (strchr(name, ':')) {
+            fprintf(OUT, "%d\n", NOP);
+            std::cout << " " << NOP << std::endl;
+            pc++;
+            continue;
+        }
+        int op = find_name(name);
+        if (op == -1) {
+            return true;
+        }
+  //      std::cout << num_args[op] << std::endl;
+        fprintf(OUT, "%d", op);
+        std::cout << " " << op ;
+        pc++;
+        if (num_args[op]) {
+            fscanf(IN, "%s", name);
+            char* ptr = strchr(name, '$');
+            int number = 0;
+            if (ptr) {
+                *ptr = '\0';
+                number = labels[atoi(name)];
+            } else {
+                number = atoi(name);
             }
-            if (!strcmp(buf_reg, "bx")) {
-                fprintf(OUT, "15\n");
-                memset(buffer, 0, 10);
-              //  fprintf(OUT, "%s\n", buf_reg);
-                memset(buf_reg, 0, 10);
-                continue;
-            }
-            if (!strcmp(buf_reg, "cx")) {
-                fprintf(OUT, "16\n");
-                memset(buffer, 0, 10);
-             //   fprintf(OUT, "%s\n", buf_reg);
-                memset(buf_reg, 0, 10);
-                continue;
-            }
-            fprintf(OUT, "1 ");
-            memset(buffer, 0, 10);
-            fprintf(OUT, "%s\n", buf_reg);
-            memset(buf_reg, 0, 10);
+            fprintf(OUT, " %d", number);
+            std::cout << " " << number;
+            pc++;
         }
-
-     //   if(!strcmp(buffer, "call"))
-
-        if (!strcmp(buffer, "pop")) {
-            fscanf(IN, "%s", buf_reg);
-            if (!strcmp(buf_reg, "ax")) {
-                fprintf(OUT, "17\n");
-               // fprintf(OUT, "%s\n", buf_reg);
-                memset(buffer, 0, 10);
-                memset(buf_reg, 0, 10);
-                continue;
-            }
-            if (!strcmp(buf_reg, "bx")) {
-                fprintf(OUT, "18\n");
-                memset(buf_reg, 0, 10);
-          //      fprintf(OUT, "%s\n", buffer);
-                memset(buffer, 0, 10);
-                continue;
-            }
-            if (!strcmp(buf_reg, "cx")) {
-                fprintf(OUT, "19\n");
-                memset(buf_reg, 0, 10);
-           //     fprintf(OUT, "%s\n", buffer);
-                memset(buffer, 0, 10);
-                continue;
-            }
-        }
-
-
-        if (!strcmp(buffer, "add")) {
-            fprintf(OUT, "2\n");
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "mul")) {
-            fprintf(OUT, "3\n");
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "sub")) {
-            fprintf(OUT, "4\n");
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "div")) {
-            fprintf(OUT, "5\n");
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "end")) {
-            fprintf(OUT, "6\n");
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "jmp")) {
-            fprintf(OUT, "7 ");
-            memset(buffer, 0, 10);
-            fscanf(IN, "%s", buffer);
-            int l = atoi(buffer);
-            fprintf(OUT, "%d\n", labels[l]);
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "je")) {
-            fprintf(OUT, "8 ");
-            memset(buffer, 0, 10);
-            fscanf(IN, "%s", buffer);
-            int l = atoi(buffer);
-            fprintf(OUT, "%d\n", labels[l]);
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "jne")) {
-            fprintf(OUT, "9 ");
-            memset(buffer, 0, 10);
-            fscanf(IN, "%s", buffer);
-            int l = atoi(buffer);
-            fprintf(OUT, "%d\n", labels[l]);
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "ja")) {
-            fprintf(OUT, "10 ");
-            memset(buffer, 0, 10);
-            fscanf(IN, "%s", buffer);
-            int l = atoi(buffer);
-            fprintf(OUT, "%d\n", labels[l]);
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "jae")) {
-            fprintf(OUT, "11 ");
-            memset(buffer, 0, 10);
-            fscanf(IN, "%s", buffer);
-            int l = atoi(buffer);
-            fprintf(OUT, "%d\n", labels[l]);
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "jb")) {
-            fprintf(OUT, "12 ");
-            memset(buffer, 0, 10);
-            fscanf(IN, "%s", buffer);
-            int l = atoi(buffer);
-            fprintf(OUT, "%d\n", labels[l]);
-            memset(buffer, 0, 10);
-        }
-        if (!strcmp(buffer, "jbe")) {
-            fprintf(OUT, "13 ");
-            memset(buffer, 0, 10);
-            fscanf(IN, "%s", buffer);
-            int l = atoi(buffer);
-            fprintf(OUT, "%d\n", labels[l]);
-            memset(buffer, 0, 10);
-        }
+        fprintf(OUT, "\n");
+        std::cout << std::endl;
     }
     fclose(IN);
     fclose(OUT);
+    return false;
 }
 
 
-
+int find_name(const char *name) {
+   // std::cout << name << std::endl;
+    for (int op = 0; op < sizeof(names) / sizeof(names[0]); op++) {
+        if (!strcasecmp(name, names[op]))
+            return op;
+    }
+    return -1;
+}

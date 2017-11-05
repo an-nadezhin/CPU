@@ -3,5 +3,5 @@ project(CPU)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES CPU.cpp assembler.cpp)
 add_executable(CPU ${SOURCE_FILES})
