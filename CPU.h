@@ -8,34 +8,16 @@
 #include "Stack.h"
 #include <math.h>
 
-enum {
-    NOP,
-    PUSH,
-    ADD,
-    MUL,
-    SUB,
-    DIV,
-    SQRT,
-    OUT,
-    JMP,
-    JE,
-    JNE,
-    JA,
-    JAE,
-    JB,
-    JBE,
-    POP_AX,
-    POP_BX,
-    POP_CX,
-    PUSH_AX,
-    PUSH_BX,
-    PUSH_CX,
-    CALL,
-    RET,
-    LD,
-    ST,
-    HALT
-};
+
+
+#define DEF_CMD(num, name, num_arg, code) num,
+
+    enum {
+#include "commands.h"
+    };
+
+#undef DEF_CMD
+
 
 #define ROM_SIZE (1 << 10)
 #define RAM_SIZE (1 << 10)
@@ -49,7 +31,8 @@ struct CPU {
     StackElem_t ax = 0;
     StackElem_t bx = 0;
     StackElem_t cx = 0;
-    int rom[ROM_SIZE];
+    StackElem_t dx = 0;
+    StackElem_t rom[ROM_SIZE];
     StackElem_t ram[RAM_SIZE];
 
 };

@@ -1,4 +1,4 @@
-push 7
+in
 call 1$
 out
 halt

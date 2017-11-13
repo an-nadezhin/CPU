@@ -9,6 +9,4 @@ bool assembler(const char *filenameIN, const char *filenameOUT);
 
 int find_name(const char *name);
 
-const char* getname(int op);
-
 #endif //CPU_ASSEMBLER_H

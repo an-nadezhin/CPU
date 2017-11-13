@@ -68,11 +68,11 @@ void StackConstruct(CStack<T> *str1) {
     str1->data = (T*) calloc(sizeof(str1->data), NMAX + 3);
     if (str1->data == NULL)
         exit(2);
-  //  str1->data[0] = POISON;
-  //  str1->data[NMAX + 2] = POISON;
+    //  str1->data[0] = POISON;
+    //  str1->data[NMAX + 2] = POISON;
     //   for(int h = 0; h < NMAX + 3; h++)
     //       std::cout << str1->data[h] << std::endl;
-  //  str1->data++ ;
+    //  str1->data++ ;
     str1->hash_sum = hash(str1);
     //  std::cout << str1->data[-1] << std::endl;
     ASSERT_OK()
@@ -157,8 +157,8 @@ bool StackOK(CStack<T> *str1) {
            && str1->count < NMAX
            && str1->canary1 == POISON
            && str1->canary2 == POISON
-      //     && str1->data[-1] == POISON
-      //     && str1->data[NMAX + 1] == POISON
+           //     && str1->data[-1] == POISON
+           //     && str1->data[NMAX + 1] == POISON
            && str1->hash_sum == hash(str1);
 }
 

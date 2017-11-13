@@ -11,7 +11,6 @@
 #define DEST pc = cpu->rom[pc];
 
 
-
 DEF_CMD(NOP, "nop", 0, {})
 
 DEF_CMD(PUSH, "push", 1, {StackPush(&cpu->stack, (StackElem_t) cpu->rom[pc++]);})
@@ -63,3 +62,11 @@ DEF_CMD(LD, "ld", 0, {int a = (int) SPOP; StackPush(&cpu->stack, cpu->ram[a]);})
 DEF_CMD(ST, "st", 0, {StackElem_t value = SPOP; int a = (int) SPOP; cpu->ram[a] = value;})
 
 DEF_CMD(HALT, "halt", 0, {return 0;})
+
+DEF_CMD(IN, "in", 0, {int in_num = 0; std::cout << "VVedite chislo : "; std::cin >> in_num; std::cout << std::endl; StackPush(&cpu->stack, (StackElem_t) in_num);})
+
+DEF_CMD(POP_DX, "pop_dx", 0, {cpu->dx = SPOP;})
+
+DEF_CMD(PUSH_DX, "push_dx", 0, {StackPush(&cpu->stack, cpu->dx);})
+
+DEF_CMD(END, "end", 0, std::cout << "end" << std::endl;)
