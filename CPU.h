@@ -5,19 +5,18 @@
 #ifndef CPU_CPU_H
 #define CPU_CPU_H
 
+#include <iostream>
 #include "Stack.h"
 #include <math.h>
-
-
+#include "assembler.h"
 
 #define DEF_CMD(num, name, num_arg, code) num,
 
-    enum {
+enum {
 #include "commands.h"
-    };
+};
 
 #undef DEF_CMD
-
 
 #define ROM_SIZE (1 << 10)
 #define RAM_SIZE (1 << 10)

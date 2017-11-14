@@ -1,8 +1,5 @@
-#include <iostream>
 #include <cstring>
 #include "CPU.h"
-#include "assembler.h"
-
 
 #define DEF_CMD(num, name, num_arg, code)  name,
 
@@ -59,7 +56,6 @@ bool assembler(const char *filenameIN, const char *filenameOUT) {
             continue;
         }
         int op = find_name(name);
-  //      std::cout << op << std::endl;
         if (op == -1) {
             return true;
         }
@@ -88,7 +84,6 @@ bool assembler(const char *filenameIN, const char *filenameOUT) {
 
 int find_name(const char *name) {
     for (int op = 0; op < sizeof(names) / sizeof(names[0]); op++) {
-  //      std::cout << names[op] << std::endl;
         if (!strcasecmp(name, names[op]))
             return op;
     }

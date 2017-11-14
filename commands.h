@@ -70,3 +70,7 @@ DEF_CMD(POP_DX, "pop_dx", 0, {cpu->dx = SPOP;})
 DEF_CMD(PUSH_DX, "push_dx", 0, {StackPush(&cpu->stack, cpu->dx);})
 
 DEF_CMD(END, "end", 0, std::cout << "end" << std::endl;)
+
+DEF_CMD(NO_ROOTS, "no_roots", 0, std::cout << "no roots" << std::endl;)
+
+DEF_CMD(INF, "inf", 0, std::cout << "inf" << std::endl;)

@@ -1,18 +1,12 @@
-#include <iostream>
-#include "Stack.h"
 #include "CPU.h"
-#include "assembler.h"
-
-
 
 int main(int argc, char *argv[]) {
     CPU cpu = {0};
-    std::cout << argv[1] << "  " << argv[2] << std::endl;
     if (assembler(argv[1], argv[2]))
-        return 8;
+        std::cout << "error in opening file" << std::endl;
     CPU_init(&cpu);
     if (CPU_Load_prog(argv[2], &cpu)) {
-        return 7;
+        std::cout << "file too large" << std::endl;
     }
     CPU_calc_sum(&cpu);
     StackDestruct(&cpu.stack);
@@ -36,7 +30,7 @@ int CPU_calc_sum(CPU *cpu) {
     int pc = 0;
 
     while (true) {
-        switch ((int)cpu->rom[pc++]) {
+        switch ((int) cpu->rom[pc++]) {
 #include "commands.h"
         }
     }

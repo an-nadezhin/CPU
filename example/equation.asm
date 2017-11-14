@@ -1,59 +1,77 @@
 in
 in
 in
-push_cx
-push_bx
-push_ax 
-pop_bx
-pop_bx
-mul
-pop_ax
 pop_cx
+pop_bx
+pop_ax
+push_bx
+push_bx
+mul
+push_ax
+push_cx
 push 4
 mul
 mul
 sub
-sqrt
-push_dx
-push 0
 pop_dx
+push 0
+push_dx
 ja 9$
 push 0
-pop_dx
+push_dx
 je 8$
 push 0
-pop_dx
+push_dx
 jb 7$
-end
+halt
 7:
-pop_ax
 push 2
-mul
-pop_dx
-pop_bx
+out
+push_bx
 push -1
 mul
+push_dx
+sqrt
 add
-div
-out
-pop_ax
+push_ax
 push 2
 mul
-pop_dx
-pop_bx
+div
+out
+push_bx
 push -1
 mul
+push_dx
+sqrt
 sub
-div
-out
-8:
-pop_ax
+push_ax
 push 2
 mul
-pop_bx
+div
+out
+halt
+8:
+push_ax
+push 0
+je 6$
+push 1
+out
+push_ax
+push 2
+mul
+push_bx
 div
 push -1
 mul
 out
+halt
 9:
-end
+push 0
+out
+no_roots
+halt
+6:
+push 0
+out
+inf
+halt
