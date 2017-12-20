@@ -1,0 +1,7 @@
+double main(double a, double b, double c) {
+double d;
+d = b*b-4*a*c; 
+if(d > 0) {print ((-b+sqrt(d))/(2*a)); print ((-b-sqrt(d))/(2*a)); return 2;}
+if(d == 0) {print ((-b)/(2*a)); return 1;} 
+if(d < 0) {return 0;}
+}

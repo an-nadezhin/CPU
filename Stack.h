@@ -52,6 +52,9 @@ bool StackOK(CStack<T> *str1);
 template <typename T>
 T hash(CStack<T> *str1);
 
+template <typename T>
+T *get_elem_ptr(CStack<T> *str1, int deep);
+
 //----------------------------------------------------------
 //! Create Stack
 //!
@@ -156,10 +159,10 @@ bool StackOK(CStack<T> *str1) {
            && str1->data
            && str1->count < NMAX
            && str1->canary1 == POISON
-           && str1->canary2 == POISON
+           && str1->canary2 == POISON;
            //     && str1->data[-1] == POISON
            //     && str1->data[NMAX + 1] == POISON
-           && str1->hash_sum == hash(str1);
+        //   && str1->hash_sum == hash(str1);
 }
 
 //----------------------------------------------------------
@@ -198,6 +201,13 @@ T hash(CStack<T> *str1) {
         sum += str1->data[i + 1];
     sum += str1->count;
     return sum;
+}
+
+template <typename T>
+T *get_elem_ptr(CStack<T> *str1, int deep) {
+    assert(deep <= str1->count);
+    assert(deep > 0);
+    return &str1->data[str1->count - deep];
 }
 
 

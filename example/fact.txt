@@ -1,0 +1,9 @@
+double fact(double n) {
+    if (n > 0) {
+        return n*fact(n - 1);
+       } 
+    return 1;
+           }
+double main(double a, double b, double c) {
+    return fact(a);
+           }

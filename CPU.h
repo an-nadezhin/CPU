@@ -31,9 +31,8 @@ struct CPU {
     StackElem_t bx = 0;
     StackElem_t cx = 0;
     StackElem_t dx = 0;
-    StackElem_t rom[ROM_SIZE];
+    prog_ad rom[ROM_SIZE];
     StackElem_t ram[RAM_SIZE];
-
 };
 
 void CPU_init(CPU *cpu);
